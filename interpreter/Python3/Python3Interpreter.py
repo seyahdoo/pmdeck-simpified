@@ -1,19 +1,44 @@
 import subprocess
 from util.do_threaded import do_threaded
 
+import tempfile
+import os
+import sys
+
+import atexit
+
 
 class Python3Interpreter:
 
     def __init__(self, code):
-        self.process = subprocess.Popen("Action/Python3/venv/Scripts/python.exe",
+
+        glue_file = open("interpreter/Python3/Glue.py")
+        glue_code = glue_file.read()
+
+        self.code_file_descriptor, self.code_file_path = tempfile.mkstemp()
+        os.write(self.code_file_descriptor, code)
+        os.write(self.code_file_descriptor, glue_code.encode())
+        os.close(self.code_file_descriptor)
+
+        # code_file = open(self.code_file_path, 'w')
+        # code_file.write(code.decode())
+        # code_file.write(glue_code)
+        # code_file.close()
+
+        print(self.code_file_path)
+
+        self.process = subprocess.Popen("interpreter/Python3/venv/Scripts/python.exe {}"
+                                        .format(self.code_file_path),
                                         stdout=subprocess.PIPE,
-                                        stdin=subprocess.PIPE)
+                                        stdin=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
 
-        self.code = code
-
-        self.process.stdin.write(code)
+        atexit.register(self.atexit)
 
         do_threaded(self.image_listener)
+        do_threaded(self.error_listener)
+
+        self.process.stdin.write(code)
 
         return
 
@@ -26,10 +51,59 @@ class Python3Interpreter:
             return
 
         while True:
-            line = self.process.stdout.readline()
+            line = self.process.stdout.read()
             if len(line) > 0:
                 line = line.decode("utf-8")
                 line = line.rstrip()
                 on_msg_receive(line)
 
+        return
+
+    def error_listener(self):
+
+        def on_msg_receive(msg):
+            # path = self.action_folder + "\\" + msg
+            #             # self.set_image_path(path)
+            print(msg)
+            return
+
+        while True:
+            line = self.process.stderr.readline()
+            if len(line) > 0:
+                line = line.decode("utf-8")
+                line = line.rstrip()
+                on_msg_receive(line)
+
+        return
+
+    def initialize(self):
+        self.process.stdin.write("initialize\n".encode("utf-8"))
+        self.process.stdin.flush()
+        return
+
+    def on_pressed(self):
+        self.process.stdin.write("on_pressed\n".encode("utf-8"))
+        self.process.stdin.flush()
+        return
+
+    def on_released(self):
+        self.process.stdin.write("on_released\n".encode("utf-8"))
+        self.process.stdin.flush()
+        return
+
+    def on_update(self):
+        self.process.stdin.write("on_update\n".encode("utf-8"))
+        self.process.stdin.flush()
+        return
+
+    def on_exit(self):
+        self.process.stdin.write("on_exit\n".encode("utf-8"))
+        self.process.stdin.flush()
+        self.process.terminate()
+        os.remove(self.code_file_path)
+        return
+
+    def atexit(self):
+        print("exiting")
+        self.on_exit()
         return

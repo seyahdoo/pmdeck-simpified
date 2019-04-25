@@ -13,7 +13,9 @@ class InterpreterLink:
 
         if "code.py" in items:
             print("its pythonic")
-            self.interpreter = Python3Interpreter()
+            code_file = zf.open("code.py")
+            code = code_file.read()
+            self.interpreter = Python3Interpreter(code)
 
         elif "code.ahk" in items:
             print("its autohotkey")

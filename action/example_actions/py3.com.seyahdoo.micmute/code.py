@@ -1,4 +1,6 @@
+
 enabled = True
+
 
 def initialize():
     set_image("mic-on.png")
@@ -14,4 +16,5 @@ def on_pressed():
         set_image("mic-on.png")
 
     enabled = not enabled
-return
+    return
+
