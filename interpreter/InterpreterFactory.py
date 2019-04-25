@@ -4,7 +4,7 @@
 
 import zipfile
 
-from interpreter.Python.PythonInterpreter import PythonInterpreter
+from interpreter.Python3.Python3Interpreter import PythonInterpreter
 from interpreter.AHK.AHKInterpreter import AHKInterpreter
 
 

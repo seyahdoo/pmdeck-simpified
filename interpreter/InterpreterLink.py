@@ -1,7 +1,7 @@
 
 import zipfile
 
-from interpreter.Python.PythonInterpreter import PythonInterpreter
+from interpreter.Python3.Python3Interpreter import Python3Interpreter
 from interpreter.AHK.AHKInterpreter import AHKInterpreter
 
 
@@ -13,7 +13,7 @@ class InterpreterLink:
 
         if "code.py" in items:
             print("its pythonic")
-            self.interpreter = PythonInterpreter()
+            self.interpreter = Python3Interpreter()
 
         elif "code.ahk" in items:
             print("its autohotkey")
