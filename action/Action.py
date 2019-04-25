@@ -1,9 +1,9 @@
 import time
 
-import zipfile
-
 from window.Window import Window
 from util.do_threaded import do_threaded
+
+from interpreter.InterpreterLink import InterpreterLink
 
 
 class Action:
@@ -14,15 +14,7 @@ class Action:
         self.window = Window()
 
         # setup interpreter
-        zf = zipfile.ZipFile(file_path, 'r')
-        items = zf.namelist()
-        if "code.py" in items:
-            print("its pythonic")
-        elif "code.ahk" in items:
-            print("its autohotkey")
-        else:
-            print("this button does not have code, returning.")
-            return
+        self.interpreter = InterpreterLink(file_path)
 
         self.is_visible = False
         self.is_pressed = False
