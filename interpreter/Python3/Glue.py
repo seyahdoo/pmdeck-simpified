@@ -15,6 +15,7 @@ def on_event_received(event):
             on_update()
         if event == "on_exit":
             on_exit()
+            sys.exit(0)
     except:
         pass
     return

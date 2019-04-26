@@ -1,4 +1,5 @@
 import base64
+import os
 import sys
 
 from PyQt5 import QtCore, QtGui
@@ -29,8 +30,7 @@ class Window:
         self.ex.mouseReleaseEvent = self.released
 
         self.app.exec_()
-
-        print("Window Closed")
+        self.closed()
         return
 
     def set_image_base64(self, base64image):
@@ -61,7 +61,8 @@ class Window:
         return
 
     def closed(self):
-
+        self.action.on_exit()
+        os._exit(0)
         return
 
 
@@ -108,9 +109,9 @@ class App(QWidget):
             self.window.always_on_top = not self.window.always_on_top
 
             if self.window.always_on_top:
-                self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint)
-            else:
                 self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+            else:
+                self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint)
 
             self.show()
 
