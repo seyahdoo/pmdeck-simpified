@@ -14,9 +14,8 @@ class Action:
         self.window = Window(self)
 
         # setup interpreter
-        self.interpreter_link = InterpreterLink(file_path)
+        self.interpreter_link = InterpreterLink(self, file_path)
 
-        self.is_visible = False
         self.is_pressed = False
 
         self.on_initialize()
@@ -32,8 +31,7 @@ class Action:
         return
 
     def _draw(self, image_string):
-        if self.is_visible:
-            self.window.set_image_base64(image_string)
+        self.window.set_image_base64(image_string)
         return
 
     def on_initialize(self):

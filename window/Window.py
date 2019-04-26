@@ -41,12 +41,10 @@ class Window:
         return
 
     def pressed(self, event):
-        print("pressed")
         self.action.on_pressed()
         return
 
     def released(self, event):
-        print("released")
         self.action.on_released()
         return
 

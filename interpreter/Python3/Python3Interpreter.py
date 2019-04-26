@@ -10,7 +10,9 @@ import atexit
 
 class Python3Interpreter:
 
-    def __init__(self, code):
+    def __init__(self, action, code):
+
+        self.action = action
 
         glue_file = open("interpreter/Python3/Glue.py")
         glue_code = glue_file.read()
@@ -36,20 +38,22 @@ class Python3Interpreter:
 
         do_threaded(self.image_listener)
 
-        self.process.stdin.write(code)
-
         return
 
     def image_listener(self):
 
-        def on_msg_receive(msg):
+        def on_msg_receive(msg: str):
             # path = self.action_folder + "\\" + msg
             #             # self.set_image_path(path)
-            print(msg)
+
+            if msg[0:9] == "SETIMAGE:":
+                base64image = msg[9:]
+                self.action.set_image_base64(base64image)
+
             return
 
         while True:
-            line = self.process.stdout.read()
+            line = self.process.stdout.readline()
             if len(line) > 0:
                 line = line.decode("utf-8")
                 line = line.rstrip()

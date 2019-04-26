@@ -20,9 +20,9 @@ def on_event_received(event):
     return
 
 
-def set_image_base64(name):
-    print(name+"\n")
-    sys
+def set_image_base64(image_string):
+    print("SETIMAGE:" + image_string + "\n")
+    sys.stdout.flush()
     return
 
 
