@@ -6,7 +6,7 @@ def on_event_received(event):
 
     try:
         if event == "initialize":
-            initialize()
+            on_initialize()
         if event == "on_pressed":
             on_pressed()
         if event == "on_released":
@@ -20,8 +20,9 @@ def on_event_received(event):
     return
 
 
-def set_image(name):
-    print(name)
+def set_image_base64(name):
+    print(name+"\n")
+    sys
     return
 
 

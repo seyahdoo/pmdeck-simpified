@@ -16,6 +16,7 @@
           <option value="interpreter.Python3.Glue.on_released" />
           <option value="interpreter.Python3.Glue.on_update" />
           <option value="interpreter.Python3.Glue.on_exit" />
+          <option value="interpreter.Python3.Glue.on_initialize" />
         </list>
       </option>
     </inspection_tool>

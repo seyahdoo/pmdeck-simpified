@@ -11,28 +11,19 @@ class Action:
     def __init__(self, file_path):
 
         # setup window
-        self.window = Window()
+        self.window = Window(self)
 
         # setup interpreter
-        self.interpreter = InterpreterLink(file_path)
+        self.interpreter_link = InterpreterLink(file_path)
 
         self.is_visible = False
         self.is_pressed = False
 
-        self.initialize()
-        do_threaded(self._update_loop)
-        return
+        self.on_initialize()
 
-    def _set_visible(self, space):
-        self.is_visible = True
-        self.current_space = space
-        self.on_visible()
-        self._draw()
-        return
+        self._updating = True
+        self._update_thread = do_threaded(self._update_loop)
 
-    def _set_invisible(self):
-        self.is_visible = False
-        self.on_invisible()
         return
 
     def set_image_base64(self, image_string):
@@ -45,60 +36,38 @@ class Action:
             self.window.set_image_base64(image_string)
         return
 
-    def _pressed(self):
-        self.is_pressed = True
-        self.on_pressed()
-        return
-
-    def _released(self):
-        self.is_pressed = False
-        self.on_released()
-        return
-
-    def _update_loop(self):
-        last_1_sec_update = time.time()
-
-        while True:
-            last_update = time.time()
-
-            self.on_update()
-            if last_update - last_1_sec_update > 1:
-                self.on_update_sec()
-                last_1_sec_update = last_update
-            if self.is_pressed:
-                self.on_hold_down()
-
-            time_elapsed = time.time() - last_update
-            if time_elapsed < 0.1:
-                time.sleep(0.1-time_elapsed)
-        return
-
-    def initialize(self):
-        return
-
-    def on_visible(self):
-        return
-
-    def on_invisible(self):
+    def on_initialize(self):
+        self.interpreter_link.interpreter.on_initialize()
         return
 
     def on_pressed(self):
-        return
-
-    def on_hold_down(self):
+        self.is_pressed = True
+        self.interpreter_link.interpreter.on_pressed()
         return
 
     def on_released(self):
-        return
-
-    def on_update_sec(self):
+        self.is_pressed = False
+        self.interpreter_link.interpreter.on_released()
         return
 
     def on_update(self):
+        self.interpreter_link.interpreter.on_update()
         return
 
     def on_exit(self):
+        self._updating = False
+        self.interpreter_link.interpreter.on_exit()
         return
 
+    def _update_loop(self):
 
+        while self._updating:
+            last_update = time.time()
+
+            self.on_update()
+
+            time_elapsed = time.time() - last_update
+            if time_elapsed < 1:
+                time.sleep(1-time_elapsed)
+        return
 

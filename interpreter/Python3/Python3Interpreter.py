@@ -30,13 +30,11 @@ class Python3Interpreter:
         self.process = subprocess.Popen("interpreter/Python3/venv/Scripts/python.exe {}"
                                         .format(self.code_file_path),
                                         stdout=subprocess.PIPE,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+                                        stdin=subprocess.PIPE)
 
         atexit.register(self.atexit)
 
         do_threaded(self.image_listener)
-        do_threaded(self.error_listener)
 
         self.process.stdin.write(code)
 
@@ -59,25 +57,8 @@ class Python3Interpreter:
 
         return
 
-    def error_listener(self):
-
-        def on_msg_receive(msg):
-            # path = self.action_folder + "\\" + msg
-            #             # self.set_image_path(path)
-            print(msg)
-            return
-
-        while True:
-            line = self.process.stderr.readline()
-            if len(line) > 0:
-                line = line.decode("utf-8")
-                line = line.rstrip()
-                on_msg_receive(line)
-
-        return
-
-    def initialize(self):
-        self.process.stdin.write("initialize\n".encode("utf-8"))
+    def on_initialize(self):
+        self.process.stdin.write("on_initialize\n".encode("utf-8"))
         self.process.stdin.flush()
         return
 
